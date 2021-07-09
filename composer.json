@@ -1,0 +1,24 @@
+{
+    "name": "grzegab/currency_translator",
+    "description": "Translates value in float into polish text of currency value",
+    "type": "library",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Grzegab\\CurrencyTranslator\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "grzegab",
+            "email": "greg@grzegab.eu"
+        }
+    ],
+    "require": {
+        "php": ">= 8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
