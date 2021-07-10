@@ -2,7 +2,7 @@
 
 namespace Grzegab\Translator;
 
-use Grzegab\CurrencyTranslator\Grzegab\Translator\CurrencyTranslator;
+use Grzegab\CurrencyTranslator\CurrencyTranslator;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -97,6 +97,19 @@ class CurrencyTest extends TestCase
         $currencyTranslator = new CurrencyTranslator();
         $this->assertEquals('jeden tysiąc dwa złote', $currencyTranslator->convert(1002));
         $this->assertEquals('jeden tysiąc dwanaście złotych 35/100', $currencyTranslator->convert(1012.35));
+        $this->assertEquals('dwanaście tysięcy dwieście sześćdziesiąt trzy złote', $currencyTranslator->convert(12263));
+        $this->assertEquals('trzydzieści dwa tysiące dwieście sześćdziesiąt trzy złote', $currencyTranslator->convert(32263));
+        $this->assertEquals('dwadzieścia dwa tysiące dwieście sześćdziesiąt trzy złote', $currencyTranslator->convert(22263));
+        $this->assertEquals('dwadzieścia cztery tysiące siedemset szesnaście złotych 22/100', $currencyTranslator->convert(24716.22));
+        $this->assertEquals('dwadzieścia sześć tysięcy siedemset dwanaście złotych 10/100', $currencyTranslator->convert(26712.10));
+        $this->assertEquals('dwadzieścia dziewięć tysięcy dziewięćset osiemdziesiąt dziewięć złotych', $currencyTranslator->convert(29989));
+        $this->assertEquals('trzydzieści pięć tysięcy osiemset dwanaście złotych', $currencyTranslator->convert(35812));
+        $this->assertEquals('czterdzieści trzy tysiące dwieście trzydzieści siedem złotych', $currencyTranslator->convert(43237));
+        $this->assertEquals('pięćdziesiąt tysięcy sto jeden złotych', $currencyTranslator->convert(50101));
+        $this->assertEquals('sześćdziesiąt cztery tysiące trzysta dwadzieścia jeden złotych', $currencyTranslator->convert(64321));
+        $this->assertEquals('siedemdziesiąt pięć tysięcy dziewięćset pięćdziesiąt cztery złote', $currencyTranslator->convert(75954));
+        $this->assertEquals('osiemdziesiąt jeden tysięcy czterysta czterdzieści cztery złote', $currencyTranslator->convert(81444));
+        $this->assertEquals('dziewięćdziesiąt siedem tysięcy siedemset siedemdziesiąt jeden złotych', $currencyTranslator->convert(97771));
     }
 
     public function testRandom(): void

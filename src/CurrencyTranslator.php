@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Grzegab\CurrencyTranslator\Grzegab\Translator;
+namespace Grzegab\CurrencyTranslator;
 
 use JetBrains\PhpStorm\Pure;
 use RuntimeException;
@@ -12,12 +12,14 @@ class CurrencyTranslator
     private bool $showGrosze;
     private bool $capitalize;
 
+    /* Special text */
     private const GROSZE_ENDING = '/100';
     private const ZERO_RESULT = 'zero złotych';
     private const EMPTY = '';
 
-    private const ZLOTYCH = 'złotych';
-    private const ZLOTE = 'złote';
+    /* Common texts */
+    private const ZLOTYCH_TEXT = 'złotych';
+    private const ZLOTE_TEXT = 'złote';
 
     public function __construct(bool $showGrosze = true, bool $capitalize = false)
     {
@@ -74,7 +76,8 @@ class CurrencyTranslator
 
     private function verifyAmount(float $amount): void
     {
-        if ($amount > 1000000000 - 1) { //too much to handle
+        /* Too much to handle */
+        if ($amount > 1000000000 - 1) {
             throw new RuntimeException('Amount is to big');
         }
     }
@@ -109,9 +112,10 @@ class CurrencyTranslator
         $zlotyArray = array_chunk(array_reverse(str_split($amount)), 3);
         $iterationCount = count($zlotyArray) - 1;
 
+        /* For each array of 3 e.g. 001 231 01 (we read it backwards) */
         for ($j = $iterationCount; $j >= 0; $j--) {
             //exception if - 13, 14 etc.
-            if (!empty($zlotyArray[$j][1]) && !empty($zlotyArray[$j][0]) && $zlotyArray[$j][0] > 0 && (int)$zlotyArray[$j][1] === 1) {
+            if (!empty($zlotyArray[$j][1]) && $zlotyArray[$j][0] > 0 && (int)$zlotyArray[$j][1] === 1) {
                 //if its 213, 413 etc, leading number
                 if (!empty($zlotyArray[$j][2])) {
                     $returnString = $this->glueText(
@@ -128,7 +132,7 @@ class CurrencyTranslator
                 //reversed foreach loop
                 $countNumbers = count($zlotyArray[$j]) - 1;
                 for ($i = $countNumbers; $i >= 0; $i--) {
-                    $space = !(((int)$zlotyArray[$j][$i][0] === 0));
+                    $space = !(((int)$zlotyArray[$j][$i][0] === 0)); // When there are two separate numbers add space between e.g. dwadzieścia dwa
                     $returnString = $this->glueText(
                         $returnString,
                         $this->textTranslationsNumber[$i][$zlotyArray[$j][$i]],
@@ -140,14 +144,21 @@ class CurrencyTranslator
             //add extension if needed
             $multiple = (count($zlotyArray[$j]) > 1) ? 1 : 0;
             if (!empty($this->textTranslationExtension[$j][$multiple][$zlotyArray[$j][0]])) {
-                $returnString = $this->glueText(
-                    $returnString,
-                    $this->textTranslationExtension[$j][$multiple][$zlotyArray[$j][0]]
-                );
+                if (!empty($zlotyArray[$j][1]) && (int)$zlotyArray[$j][1] === 1) { //Exception when 12, 13, 16 etc.
+                    $returnString = $this->glueText(
+                        $returnString,
+                        $this->textTranslationExtension[$j][$multiple][$zlotyArray[$j][1]]
+                    );
+                } else {
+                    $returnString = $this->glueText(
+                        $returnString,
+                        $this->textTranslationExtension[$j][$multiple][$zlotyArray[$j][0]]
+                    );
+                }
             }
         }
 
-        //add ending
+        /* This add ending to overall text */
         if (count($zlotyArray[0]) > 1 && !empty($zlotyArray[0][1]) && $zlotyArray[0][0] > 0 && (int)$zlotyArray[0][1] === 1) {
             $returnString = $this->glueText($returnString, $this->textTranslationEndingException);
         } elseif (count($zlotyArray[0]) > 1) {
@@ -245,9 +256,9 @@ class CurrencyTranslator
                         [
                             0 => 'tysięcy',
                             1 => 'tysięcy',
-                            2 => 'tysięcy',
-                            3 => 'tysięcy',
-                            4 => 'tysięcy',
+                            2 => 'tysiące',
+                            3 => 'tysiące',
+                            4 => 'tysiące',
                             5 => 'tysięcy',
                             6 => 'tysięcy',
                             7 => 'tysięcy',
@@ -289,44 +300,44 @@ class CurrencyTranslator
     private $textTranslationEnding = [
         0 =>
             [
-                0 => self::ZLOTYCH,
+                0 => self::ZLOTYCH_TEXT,
                 1 => 'złoty',
-                2 => self::ZLOTE,
-                3 => self::ZLOTE,
-                4 => self::ZLOTE,
-                5 => self::ZLOTYCH,
-                6 => self::ZLOTYCH,
-                7 => self::ZLOTYCH,
-                8 => self::ZLOTYCH,
-                9 => self::ZLOTYCH
+                2 => self::ZLOTE_TEXT,
+                3 => self::ZLOTE_TEXT,
+                4 => self::ZLOTE_TEXT,
+                5 => self::ZLOTYCH_TEXT,
+                6 => self::ZLOTYCH_TEXT,
+                7 => self::ZLOTYCH_TEXT,
+                8 => self::ZLOTYCH_TEXT,
+                9 => self::ZLOTYCH_TEXT
             ],
         1 =>
             [
-                0 => self::ZLOTYCH,
-                1 => self::ZLOTYCH,
-                2 => self::ZLOTE,
-                3 => self::ZLOTE,
-                4 => self::ZLOTE,
-                5 => self::ZLOTYCH,
-                6 => self::ZLOTYCH,
-                7 => self::ZLOTYCH,
-                8 => self::ZLOTYCH,
-                9 => self::ZLOTYCH
+                0 => self::ZLOTYCH_TEXT,
+                1 => self::ZLOTYCH_TEXT,
+                2 => self::ZLOTE_TEXT,
+                3 => self::ZLOTE_TEXT,
+                4 => self::ZLOTE_TEXT,
+                5 => self::ZLOTYCH_TEXT,
+                6 => self::ZLOTYCH_TEXT,
+                7 => self::ZLOTYCH_TEXT,
+                8 => self::ZLOTYCH_TEXT,
+                9 => self::ZLOTYCH_TEXT
             ],
         2 =>
             [
-                0 => self::ZLOTYCH,
-                1 => self::ZLOTYCH,
-                2 => self::ZLOTYCH,
-                3 => self::ZLOTYCH,
-                4 => self::ZLOTYCH,
-                5 => self::ZLOTYCH,
-                6 => self::ZLOTYCH,
-                7 => self::ZLOTYCH,
-                8 => self::ZLOTYCH,
-                9 => self::ZLOTYCH
+                0 => self::ZLOTYCH_TEXT,
+                1 => self::ZLOTYCH_TEXT,
+                2 => self::ZLOTYCH_TEXT,
+                3 => self::ZLOTYCH_TEXT,
+                4 => self::ZLOTYCH_TEXT,
+                5 => self::ZLOTYCH_TEXT,
+                6 => self::ZLOTYCH_TEXT,
+                7 => self::ZLOTYCH_TEXT,
+                8 => self::ZLOTYCH_TEXT,
+                9 => self::ZLOTYCH_TEXT
             ]
     ];
 
-    private string $textTranslationEndingException = self::ZLOTYCH;
+    private string $textTranslationEndingException = self::ZLOTYCH_TEXT;
 }
